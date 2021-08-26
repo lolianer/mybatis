@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.swz.mybatis.dao.DepartmentMapper">
+    <!--Department getDeptById(Integer id);-->
+    <select id="getDeptById" resultType="com.swz.mybatis.bean.Department">
+        select id, dept_name departmentName from tb1_dept where id=#{id}
+    </select>
+
+    
+    <resultMap id="MyDept" type="com.swz.mybatis.bean.Department">
+        <id column="did" property="id" />
+        <result column="dept_name" property="departmentName" />
+        <collection property="emps" ofType="com.swz.mybatis.bean.Employee">
+            <id column="eid" property="id" />
+            <result column="last_name" property="lastName" />
+            <result column="email" property="email" />
+            <result column="gender" property="gender" />
+            <association property="dept" select="com.swz.mybatis.dao.DepartmentMapper.getDeptById" column="did">
+
+            </association>
+        </collection>
+    </resultMap>
+    
+    <!--Department getDeptByIdPlus(Integer id);-->
+    <select id="getDeptByIdPlus" resultMap="MyDept">
+        select dept.id did, dept.dept_name, emp.id eid, emp.last_name, emp.email, emp.gender
+        from tb1_dept dept left join tb1_employee emp on dept.id=emp.d_id
+        where dept.id=#{id}
+    </select>
+
+
+
+    <resultMap id="MyDeptStep" type="com.swz.mybatis.bean.Department">
+        <id column="id" property="id" />
+        <result column="dept_name" property="departmentName" />
+        <collection property="emps" select="com.swz.mybatis.dao.EmployeeMapperPlus.getEmpByDeptId" column="deptId=id"
+                    fetchType="eager">
+
+        </collection>
+    </resultMap>
+
+<!--    Department getDeptByIdStep(Integer id);-->
+    <select id="getDeptByIdStep" resultMap="MyDeptStep">
+        select id, dept_name from tb1_dept where id=#{id}
+    </select>
+</mapper>

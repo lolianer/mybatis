@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.swz.mybatis.dao.EmployeeMapper">
+<!--	Map<Integer, Employee> getEmpByLastNameLikeReturnMap(String lastName);-->
+	<select id="getEmpByLastNameLikeReturnMap" resultType="com.swz.mybatis.bean.Employee">
+		select * from tb1_employee where last_name like #{lastName}
+	</select>
+
+<!--	Map<String, Object>  getEmpByIdReturnMap(Integer id);-->
+	<select id="getEmpByIdReturnMap" resultType="map">
+		select * from tb1_employee where id=#{id}
+	</select>
+
+	<!--List<Employee> getEmpsByLastNameLike(String lastName);-->
+	<select id="getEmpsByLastNameLike" resultType="com.swz.mybatis.bean.Employee">
+		select * from tb1_employee where last_name like #{lastName}
+	</select>
+
+	<select id="getEmployee" resultType="com.swz.mybatis.bean.Employee">
+		select id, last_name, gender, email  from tb1_employee where id = #{id} and last_name=#{lastName}
+	</select>
+<!--	Employee getEmployeeByMap(Map<String, Object> map);-->
+	<select id="getEmployeeByMap" resultType="com.swz.mybatis.bean.Employee">
+		select id, last_name, gender, email  from #{tableName} where id = #{id} and last_name=#{lastName}
+	</select>
+	
+	<select id="getEmployeeById" resultType="com.swz.mybatis.bean.Employee">
+		select id, last_name, gender, email  from tb1_employee where id = #{idsda}
+	</select>
+	
+	<!-- void addEmp(Employee employee); -->
+	<insert id="addEmp" parameterType="com.swz.mybatis.bean.Employee"
+	useGeneratedKeys="true" keyProperty="id">
+		insert into tb1_employee(last_name,email, gender) 
+		values(#{lastName},#{email},#{gender})
+	</insert>
+	
+	<!-- void updateEmp(Employee employee); -->
+	<update id="updateEmp" >
+		update tb1_employee set last_name=#{lastName},email=#{email},gender=#{gender} where id=#{id}
+	</update>
+	
+	<!-- void deleteEmp(Integer id); -->
+	<delete id="deleteEmp">
+		delete from tb1_employee where id=#{id}
+	</delete>
+	
+</mapper>

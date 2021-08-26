@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.swz.mybatis.dao.EmployeeMapperPlus">
+    
+    <resultMap id="MySimEmp" type="com.swz.mybatis.bean.Employee">
+        <id column="id" property="id" />
+        <result column="last_name" property="lastName" />
+        <result column="email" property="email" />
+        <result column="gender" property="gender" />
+    </resultMap>
+    
+<!--    Employee getEmpById(Integer id);-->
+    <select id="getEmpById" resultMap="MySimEmp">
+        select * from tb1_employee where id=#{id}
+    </select>
+
+    
+    <resultMap id="MyDifEmp" type="com.swz.mybatis.bean.Employee">
+        <id column="id" property="id" />
+        <result column="last_name" property="lastName" />
+        <result column="gender" property="gender" />
+        <result column="email" property="email" />
+        <result column="email" property="email" />
+        <result column="dept_id" property="dept.id" />
+        <result column="dept_name" property="dept.departmentName" />
+    </resultMap>
+
+    <resultMap id="MyDifEmp2" type="com.swz.mybatis.bean.Employee">
+        <id column="id" property="id" />
+        <result column="last_name" property="lastName" />
+        <result column="gender" property="gender" />
+        <result column="email" property="email" />
+        <result column="email" property="email" />
+        <association property="dept" javaType="com.swz.mybatis.bean.Department">
+            <id column="dept_id" property="id" />
+            <result column="dept_name" property="departmentName" />
+        </association>
+    </resultMap>
+
+<!--    Employee getEmpAndDept(Integer id);-->
+    <select id="getEmpAndDept" resultMap="MyDifEmp2">
+        select emp.id,emp.last_name, emp.gender, emp.email, emp.d_id dept_id, dept.dept_name from tb1_employee emp, tb1_dept dept
+        where emp.d_id=dept.id and emp.id=#{id}
+    </select>
+
+
+    <resultMap id="MyEmpByStep" type="com.swz.mybatis.bean.Employee">
+        <id column="id" property="id" />
+        <result column="last_name" property="lastName" />
+        <result column="email" property="email" />
+        <result column="gender" property="gender" />
+        <association property="dept" select="com.swz.mybatis.dao.DepartmentMapper.getDeptById" column="d_id">
+
+        </association>
+    </resultMap>
+
+    <!--Employee getEmpByStep(Integer id);-->
+    <select id="getEmpByStep" resultMap="MyEmpDis">
+        select * from tb1_employee where id=#{id}
+    </select>
+
+
+<!--    List<Employee> getEmpByDeptId(Integer deptId);-->
+    <select id="getEmpByDeptId" resultType="com.swz.mybatis.bean.Employee">
+        select * from tb1_employee where d_id=#{deptId}
+    </select>
+
+
+    <resultMap id="MyEmpDis" type="com.swz.mybatis.bean.Employee">
+        <id column="id" property="id" />
+        <result column="last_name" property="lastName" />
+        <result column="email" property="email" />
+        <result column="gender" property="gender" />
+        <discriminator javaType="string" column="gender" >
+            <case value="0" resultType="com.swz.mybatis.bean.Employee">
+                <association property="dept" select="com.swz.mybatis.dao.DepartmentMapper.getDeptById" column="d_id">
+                </association>
+            </case>
+            <case value="1" resultType="com.swz.mybatis.bean.Employee">
+                <id column="id" property="id"/>
+                <result column="last_name" property="lastName"/>
+                <result column="last_name" property="email"/>
+                <result column="gender" property="gender"/>
+            </case>
+        </discriminator>
+
+    </resultMap>
+</mapper>
