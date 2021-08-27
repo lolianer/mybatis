@@ -1,13 +1,10 @@
 package com.swz.mybatis.test;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import com.swz.mybatis.bean.Department;
+import com.swz.mybatis.bean.Employee;
 import com.swz.mybatis.dao.DepartmentMapper;
+import com.swz.mybatis.dao.EmployeeMapper;
+import com.swz.mybatis.dao.EmployeeMapperDynamicSQL;
 import com.swz.mybatis.dao.EmployeeMapperPlus;
 import org.apache.ibatis.io.Resources;
 import org.apache.ibatis.session.SqlSession;
@@ -15,8 +12,12 @@ import org.apache.ibatis.session.SqlSessionFactory;
 import org.apache.ibatis.session.SqlSessionFactoryBuilder;
 import org.junit.Test;
 
-import com.swz.mybatis.bean.Employee;
-import com.swz.mybatis.dao.EmployeeMapper;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 
 public class MyBatisTest {
 	
@@ -171,6 +172,54 @@ public class MyBatisTest {
 			Department department = mapper.getDeptByIdStep(1);
 			System.out.println(department.getId());
 			System.out.println(department.getEmps());
+		} finally {
+			sqlSession.close();
+		}
+	}
+
+	@Test
+	public void testDynamicSql() {
+		SqlSession sqlSession = null;
+		try {
+			SqlSessionFactory sqlSessionfactory = getSqlSessionfactory();
+			sqlSession = sqlSessionfactory.openSession();
+			EmployeeMapperDynamicSQL mapper = sqlSession.getMapper(EmployeeMapperDynamicSQL.class);
+			Employee employee = new Employee(1, "admin", null, null);
+
+//			List<Employee> emps = mapper.getEmpsByConditionIf(employee);
+
+//			List<Employee> emps = mapper.getEmpsByConditionTrim(employee);
+
+			/*List<Employee> emps = mapper.getEmpsByConditionChoose(employee);
+			emps.forEach(System.out::println);*/
+
+//			mapper.updateEmp(employee);
+//			sqlSession.commit();
+
+			List<Employee> emps = mapper.getEmpsByConditionForeach(Arrays.asList(1,2,3));
+			emps.forEach(System.out::println);
+		} catch (Exception e){
+			e.printStackTrace();
+		}finally {
+
+			sqlSession.close();
+		}
+	}
+
+	@Test
+	public void testBatchSave() {
+		SqlSession sqlSession = null;
+		try {
+			SqlSessionFactory sqlSessionfactory = getSqlSessionfactory();
+			sqlSession = sqlSessionfactory.openSession();
+			EmployeeMapperDynamicSQL mapper = sqlSession.getMapper(EmployeeMapperDynamicSQL.class);
+			List<Employee> list = new ArrayList<>();
+			list.add(new Employee(null, "smith", "smith@qq.com", "1",new Department(1)));
+			list.add(new Employee(null, "allen", "allen@qq.com", "0",new Department(1)));
+			mapper.addEmps(list);
+			sqlSession.commit();
+		} catch (IOException e) {
+			e.printStackTrace();
 		} finally {
 			sqlSession.close();
 		}

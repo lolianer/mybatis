@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.swz.mybatis.dao.EmployeeMapperDynamicSQL">
+
+    <!--List<Employee> getEmpsByConditionIf(Employee employee);-->
+    <select id="getEmpsByConditionIf" resultType="com.swz.mybatis.bean.Employee">
+        select * from tb1_employee
+        <where>
+            <if test="id!=null">
+                id=#{id}
+            </if>
+            <if test="lastName!=null and lastName!=''">
+                and last_name like #{lastName}
+            </if>
+            <if test="email!=null and email.trim()!=''">
+                and email=#{email}
+            </if>
+            <if test="gender==0 or gender==1">
+                and gender=#{gender}
+            </if>
+        </where>
+    </select>
+
+    <!--List<Employee> getEmpsByConditionTrim(Employee employee);-->
+    <select id="getEmpsByConditionTrim" resultType="com.swz.mybatis.bean.Employee">
+        select * from tb1_employee
+        <trim prefix="where" suffixOverrides="and">
+            <if test="id!=null">
+                id=#{id} and
+            </if>
+            <if test="lastName!=null and lastName!=''">
+                last_name like #{lastName} and
+            </if>
+            <if test="email!=null and email.trim()!=''">
+                email=#{email} and
+            </if>
+            <if test="gender==0 or gender==1">
+                gender=#{gender} and
+            </if>
+        </trim>
+    </select>
+
+<!--    List<Employee> getEmpsByConditionChoose(Employee employee);-->
+    <select id="getEmpsByConditionChoose" resultType="com.swz.mybatis.bean.Employee">
+        select * from tb1_employee
+        <where>
+            <choose>
+                <when test="id!=null">
+                    id=#{id}
+                </when>
+                <when test="lastName!=null">
+                    last_name like #{lastName}
+                </when>
+                <when test="email!=null">
+                    email=#{email}
+                </when>
+                <otherwise>
+                    gender=0
+                </otherwise>
+            </choose>
+        </where>
+    </select>
+
+<!--    void updateEmp(Employee employee);-->
+    <update id="updateEmp">
+        update tb1_employee
+        <set>
+            <if test="lastName!=null">
+                last_name=#{lastName},
+            </if>
+            <if test="email!=null">
+                email=#{email},
+            </if>
+            <if test="gender!=null">
+                gender=#{gender}
+            </if>
+        </set>
+        where id=#{id}
+    </update>
+
+    <!--public List<Employee> getEmpsByConditionForeach(List<Integer> ids);-->
+    <select id="getEmpsByConditionForeach" resultType="com.swz.mybatis.bean.Employee">
+        select * from tb1_employee where id in
+        <foreach collection="collection" item="item_id" separator="," open="(" close=")">
+            #{item_id}
+        </foreach>
+    </select>
+
+    <!--void addEmps(@Param("emps") List<Employee> emps);-->
+    <!--<insert id="addEmps">
+        insert into tb1_employee (last_name, email, gender, d_id)
+        values
+        <foreach collection="emps" item="emp" separator=",">
+            (#{emp.lastName},#{emp.email},#{emp.gender},#{emp.dept.id})
+        </foreach>
+    </insert>-->
+
+    <select id="addEmps">
+        <foreach collection="emps" item="emp" separator=";">
+            insert into tb1_employee (last_name, email, gender, d_id)
+            values (#{emp.lastName},#{emp.email},#{emp.gender},#{emp.dept.id})
+        </foreach>
+    </select>
+
+<!--    List<Employee> getEmpsTestInnerParameter(Employee employee);-->
+    <select id="getEmpsTestInnerParameter" resultType="com.swz.mybatis.bean.Employee">
+        select * from tb1_employee
+    </select>
+
+</mapper>

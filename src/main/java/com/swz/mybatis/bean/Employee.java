@@ -12,6 +12,13 @@ public class Employee {
 		super();
 	}
 
+	public Employee(Integer id, String lastName, String email, String gender) {
+		this.id = id;
+		this.lastName = lastName;
+		this.email = email;
+		this.gender = gender;
+	}
+
 	public Employee(Integer id, String lastName, String email, String gender, Department dept) {
 		this.id = id;
 		this.lastName = lastName;
@@ -66,8 +73,7 @@ public class Employee {
 				"id=" + id +
 				", lastName='" + lastName + '\'' +
 				", email='" + email + '\'' +
-				", gender='" + gender + '\'' +
-				", dept=" + dept +
+				", gender='" + gender +
 				'}';
 	}
 }
